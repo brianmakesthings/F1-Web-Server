@@ -10,9 +10,9 @@ from matplotlib import rcParams, pyplot as plt
 import seaborn as sns 
 # import import_ipynb
 from math import ceil
-import mpld3
 
 # %%
+plt.switch_backend('Agg') 
 f.Cache.enable_cache("./f1_cache")
 
 # %%

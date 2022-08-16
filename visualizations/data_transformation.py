@@ -7,6 +7,7 @@ import fastf1 as f
 # import import_ipynb
 
 # %%
+plt.switch_backend('Agg')
 f.Cache.enable_cache("./f1_cache")
 
 # # %% [markdown]
