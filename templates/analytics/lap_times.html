@@ -1,0 +1,30 @@
+<h1>F1 Graph</h1>
+
+<form id="lapForm" action="/analytics/lap_times">
+    <select name="year"  id="years">
+        <option value="2021">2021</option>
+        <option value="2022">2022</option>
+    </select>
+
+    <br>
+
+    <label for="absolute_compound">Absolute Compound?</label>
+    <input type="checkbox" name="absolute_compound">
+
+    <br>
+
+    <input type="submit"/>
+</form>
+
+{{image|safe}}
+
+<script>
+    // const form = lapForm;
+
+    // form.addEventListener('submit', (evt) => {
+    //     evt.preventDefault();
+    //     const formData = new FormData(form);
+    //     const params = new URLSearchParams(formData);
+    //     console.log(params.toString());
+    // });
+</script>
