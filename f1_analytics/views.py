@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from visualizations.visualizations import plot_driver_lap_times
 from f1_analytics.events_drivers import get_event_lists, event_to_drivers_csv
 from io import StringIO
@@ -34,12 +34,16 @@ def lap_times(request):
     return render(request, "analytics/lap_times.html", {"image": svg_data})
 
 def events(request):
-    year = request.GET.get("year", "2021")
+    year = request.GET.get("year")
+    if year is None:
+        return HttpResponseBadRequest('Missing params')
     events = get_event_lists(int(year))
     return JsonResponse({"events": events})
 
 def drivers(request):
-    year = request.GET.get("year", "2021")
-    event = request.GET.get("event", "Bahrain Grand Prix")
+    year = request.GET.get("year")
+    event = request.GET.get("event")
+    if year is None or event is None:
+        return HttpResponseBadRequest('Missing params')
     drivers = event_to_drivers_csv(int(year), event)
     return JsonResponse({"drivers":drivers})
