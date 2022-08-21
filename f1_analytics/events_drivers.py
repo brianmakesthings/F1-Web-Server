@@ -5,8 +5,8 @@ import pandas as pd
 
 # (temp) read in datasets 
 
-df_laps_2021 = pd.read_csv("../../../F1-Visualization/transformed_laps_2021.csv", header=0, index_col=0, parse_dates=["LapStartDate"], infer_datetime_format=True, true_values=["True"], false_values=["False"])
-df_laps_2022 = pd.read_csv("../../../F1-Visualization/transformed_laps_2022.csv", header=0, index_col=0, parse_dates=["LapStartDate"], infer_datetime_format=True, true_values=["True"], false_values=["False"])
+df_laps_2021 = pd.read_csv("visualizations/transformed_laps_2021.csv", header=0, index_col=0, parse_dates=["LapStartDate"], infer_datetime_format=True, true_values=["True"], false_values=["False"])
+df_laps_2022 = pd.read_csv("visualizations/transformed_laps_2022.csv", header=0, index_col=0, parse_dates=["LapStartDate"], infer_datetime_format=True, true_values=["True"], false_values=["False"])
 
 # Getting events list given year is tricky because the 2022 csv is incomplete
 # Depend on fastf1's schedule api instead
@@ -27,7 +27,7 @@ def get_event_lists(year):
 # Returns: list of str (actual driver names)
 def event_to_drivers_csv(year, event_name):
     if year == 2021:
-        return pd.unqiue(df_laps_2021[df_laps_2021["EventName"]==event_name]["Driver"]).tolist()
+        return pd.unique(df_laps_2021[df_laps_2021["EventName"]==event_name]["Driver"]).tolist()
     elif year == 2022:
         return pd.unique(df_laps_2022[df_laps_2022["EventName"]==event_name]["Driver"]).tolist()
 
@@ -42,8 +42,8 @@ def event_to_drivers_api(year, event_name):
     return race.drivers
 
 ### testing 
-print(get_event_lists(2021))
-print(get_event_lists(2022))
-print(event_to_drivers_csv(2022, "French Grand Prix"))
-print(event_to_drivers_csv(2022, "French"))
+# print(get_event_lists(2021))
+# print(get_event_lists(2022))
+# print(event_to_drivers_csv(2022, "French Grand Prix"))
+# print(event_to_drivers_csv(2022, "French"))
 # print(event_to_drivers_api(2022, "French Grand Prix"))
