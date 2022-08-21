@@ -11,12 +11,14 @@ def index(request):
 
 def lap_times(request):
     form_data = {
-        "year": request.GET.get("year", "2021"),
-        "event": request.GET.get("event", "Hungary"),
-        "drivers": request.GET.getlist("drivers[]", []),
+        "year": request.GET.get("year"),
+        "event": request.GET.get("event"),
+        "drivers": request.GET.getlist("drivers[]"),
         "absolute_compound": request.GET.get("absolute_compound", False) == "on",
     }
-    print(form_data["drivers"])
+    for key in form_data:
+        if form_data[key] is None:
+            return render(request, "analytics/lap_times.html", {"image": ""})
     lap_time_lineplot = plot_driver_lap_times(
         year=int(form_data["year"]),
         event=form_data["event"],
