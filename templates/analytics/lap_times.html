@@ -1,10 +1,22 @@
-<h1>F1 Graph</h1>
+<h1>F1 Lap Times Graph</h1>
 
 <form id="lapForm" action="/analytics/lap_times">
-    <select name="year"  id="years">
+    <select name="year"  id="yearsField">
         <option value="2021">2021</option>
         <option value="2022">2022</option>
     </select>
+    
+    <br>
+
+    <select name="event" id="eventsField">
+    </select>
+
+    <br>
+
+    <!-- <select name="drivers" id="driversField">
+    </select> -->
+    <div id="driversField">
+    </div>
 
     <br>
 
@@ -13,18 +25,49 @@
 
     <br>
 
-    <input type="submit"/>
+    <input type="submit" value="Submit">
 </form>
 
 {{image|safe}}
 
-<script>
-    // const form = lapForm;
+<script type="module">
+    const queryEvents = async (year) => {
+        const queryUrl = '/analytics/events?'
+        const queryParams = new URLSearchParams({
+            year: year
+        });
+        let events = await fetch(queryUrl + queryParams).then((res)=>res.json());
+        let newOptionsHtml = events['events'].map((event) => {
+                return `<option value="${event}">${event}</option>`;
+            }).join('\n');
+        console.log(newOptionsHtml);
+        eventsField.innerHTML = newOptionsHtml;
+    }
 
-    // form.addEventListener('submit', (evt) => {
-    //     evt.preventDefault();
-    //     const formData = new FormData(form);
-    //     const params = new URLSearchParams(formData);
-    //     console.log(params.toString());
-    // });
+    const queryDrivers = async (year, event) => {
+        const queryUrl = '/analytics/drivers?'
+        const queryParams = new URLSearchParams({
+            year: year,
+            event: event
+        });
+        let drivers= await fetch(queryUrl + queryParams).then((res)=>res.json());
+        let newOptionsHtml = drivers['drivers'].map((driver) => {
+                return `<input type="checkbox" name="drivers[]" value="${driver}">${driver}</input>`;
+            }).join('\n');
+        console.log(newOptionsHtml);
+        driversField.innerHTML = newOptionsHtml;
+    }
+
+    await queryEvents(yearsField.value);
+    await queryDrivers(yearsField.value, eventsField.value);
+
+    yearsField.addEventListener("change", () => {
+        console.log(yearsField.value);
+        queryEvents(yearsField.value)
+    });
+
+    eventsField.addEventListener("change", () => {
+        console.log(eventsField.value);
+        queryDrivers(yearsField.value, eventsField.value);
+    });
 </script>

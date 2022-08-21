@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from visualizations.visualizations import plot_driver_lap_times
 from f1_analytics.events_drivers import get_event_lists, event_to_drivers_csv
 from io import StringIO
@@ -13,13 +13,14 @@ def lap_times(request):
     form_data = {
         "year": request.GET.get("year", "2021"),
         "event": request.GET.get("event", "Hungary"),
-        "drivers": request.GET.get("drivers", "[]"),
+        "drivers": request.GET.getlist("drivers[]", []),
         "absolute_compound": request.GET.get("absolute_compound", False) == "on",
     }
+    print(form_data["drivers"])
     lap_time_lineplot = plot_driver_lap_times(
         year=int(form_data["year"]),
         event=form_data["event"],
-        drivers=["VER", "LEC", "ALO"],
+        drivers=form_data["drivers"],
         y="sLapTime",
         upper_bound=10,
         absolute_compound=False,
@@ -33,10 +34,10 @@ def lap_times(request):
 def events(request):
     year = request.GET.get("year", "2021")
     events = get_event_lists(int(year))
-    return HttpResponse(", ".join(events))
+    return JsonResponse({"events": events})
 
 def drivers(request):
     year = request.GET.get("year", "2021")
     event = request.GET.get("event", "Bahrain Grand Prix")
     drivers = event_to_drivers_csv(int(year), event)
-    return HttpResponse(", ".join(drivers))
+    return JsonResponse({"drivers":drivers})
