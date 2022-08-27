@@ -25,6 +25,14 @@
 
     <br>
 
+    <select name="y-data">
+        {% for label in y_options %}
+            <option value="{{label}}">{{label}}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+
     <input type="submit" value="Submit">
 </form>
 
@@ -40,7 +48,6 @@
         let newOptionsHtml = events['events'].map((event) => {
                 return `<option value="${event}">${event}</option>`;
             }).join('\n');
-        console.log(newOptionsHtml);
         eventsField.innerHTML = newOptionsHtml;
     }
 
@@ -54,7 +61,6 @@
         let newOptionsHtml = drivers['drivers'].map((driver) => {
                 return `<input type="checkbox" name="drivers[]" value="${driver}">${driver}</input>`;
             }).join('\n');
-        console.log(newOptionsHtml);
         driversField.innerHTML = newOptionsHtml;
     }
 

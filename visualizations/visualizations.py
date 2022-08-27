@@ -271,7 +271,7 @@ def reorder_legend(labels):
 
 
 # %%
-def plot_driver_lap_times(year, event, drivers, y, upper_bound=10, absolute_compound=False):
+def plot_driver_lap_times(year, event, drivers, y="sLapTime", upper_bound=10, absolute_compound=False):
     """
     Plot lap times for selected year, event, and drivers
     
@@ -288,7 +288,7 @@ def plot_driver_lap_times(year, event, drivers, y, upper_bound=10, absolute_comp
         drivers: list
             List of the three-letter abbreviations of the drivers to be included 
             
-        y: str, default
+        y: str, default: sLapTime
             Name of the column to be used as the y-axis.
             
         upper_bound: float, default: 10
@@ -387,6 +387,111 @@ def lap_filter_round_compound_valid(row, round_number, compounds):
 
 # %%
 def convert_compound_names(year, round_number, compounds):
+    """
+    Plot lap times for selected year, event, and drivers
+    
+    Only laps with IsAccurate=True will be plotted.
+        
+    Args:
+        year: int {2021, 2022}
+            Championship year
+            
+        event: int or str
+            Round number or name of the event
+            Name is fuzzy matched by fastf1.get_event()
+        
+        drivers: list
+            List of the three-letter abbreviations of the drivers to be included 
+            
+        y: str, default: sLapTime
+            Name of the column to be used as the y-axis.
+            
+        upper_bound: float, default: 10
+            The upper bound of PctFromFastest for the laps to include
+            
+            If None, upper bound is set to 30. Use this setting for wet races!
+            
+            e.g. By default, only laps that are no more than 10% slower than the fastest lap are plotted 
+        
+        absolute_compound: bool, default: False
+            If True, use absolute compound palette (C1, C2 etc.)
+            
+            If False, use relative compound palette (SOFT, MEDIUM, HARD)
+        
+    Returns: Figure
+    """    
+    
+    max_width = 4
+    
+    plt.style.use("dark_background")
+    
+    fontdict = {'fontsize': rcParams['axes.titlesize'],
+                'fontweight': rcParams['axes.titleweight'],
+                'color': rcParams['axes.titlecolor'],
+                'verticalalignment': 'baseline',
+                'horizontalalignment': "center"}
+    
+    num_row = ceil(len(drivers) / max_width)
+    num_col = len(drivers) if len(drivers) < max_width else max_width
+    fig, axes = plt.subplots(nrows=num_row, ncols=num_col, sharey=True, sharex=True, figsize=(5*num_col, 5*num_row))
+    
+    # Prevent TypeError when only one driver is plotted
+    if len(drivers) == 1:
+        axes = np.array([axes])
+
+    event_info = f.get_event(year, event)
+    round_number = event_info["RoundNumber"]
+    event_name = event_info["EventName"]
+    
+    included_laps = pd.DataFrame()
+    args = plot_args(absolute_compound)
+    
+    if year == 2021:
+        included_laps = df_laps_2021[df_laps_2021.apply(lambda row: lap_filter_round_driver(row, round_number, drivers), axis=1)]
+    elif year == 2022:
+        included_laps = df_laps_2022[df_laps_2022.apply(lambda row: lap_filter_round_driver(row, round_number, drivers), axis=1)]
+    else:
+        raise ValueError("Year requested ({}) not available".format(year))
+        
+    for i in range(len(drivers)):
+        row = i // max_width
+        col = i % max_width
+        
+        ax = axes[row][col] if num_row > 1 else axes[col]
+        
+        driver_color = p.driver_color(drivers[i])
+        driver_laps = included_laps[included_laps["Driver"]==drivers[i]]
+        
+        pit_in_laps = driver_laps[driver_laps["PitInTime"].notnull()]["LapNumber"].to_numpy()
+        
+        # After pitstops are identified, we can filter for IsAccurate=True and upper_bound
+        driver_laps = driver_laps[driver_laps.apply(lambda row: lap_filter_upper_accurate(row, upper_bound), axis=1)]
+            
+        sns.scatterplot(data=driver_laps, 
+                        x="LapNumber", 
+                        y=y, 
+                        ax=ax, 
+                        hue=args[0], 
+                        palette=args[1],
+                        hue_order=args[3],
+                        style="FreshTyre",
+                        style_order = [True, False],
+                        markers=FreshTyre_markers,
+                        legend='auto' if i == num_col-1 else False)
+        
+        ax.vlines(ymin=plt.yticks()[0][1], ymax=plt.yticks()[0][-2], x=pit_in_laps, label="Pitstop", linestyle="dashed")
+
+        fontdict["color"] = driver_color 
+        ax.set_title(label=drivers[i], fontdict=fontdict, fontsize=12)
+        
+        ax.grid(color=driver_color, which='both', axis='both')
+        sns.despine(left=True, bottom=True)
+                
+    fig.suptitle(t="{} {}".format(year, event_name), fontsize=20)
+    axes.flatten()[num_col-1].legend(loc='best', fontsize=8, framealpha=0.5)
+    plt.show()
+    
+    return fig
     """
     Convert relative compound names to absolute names 
     

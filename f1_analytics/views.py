@@ -15,23 +15,28 @@ def lap_times(request):
         "event": request.GET.get("event"),
         "drivers": request.GET.getlist("drivers[]"),
         "absolute_compound": request.GET.get("absolute_compound", False) == "on",
+        "y-data": request.GET.get("y-data", "sLapTime"),
+    }
+    context = {
+        "image": "",
+        "y_options": ["DeltaToRep", "DeltaToFastest", "PctFromRep", "PctFromFastest", "DeltaToLapRep", "PctFromLapRep", "sLapTime", "sDeltaToRep", "sDeltaToFastest", "sDeltaToLapRep"],
     }
     for key in form_data:
         if form_data[key] is None:
-            return render(request, "analytics/lap_times.html", {"image": ""})
+            return render(request, "analytics/lap_times.html", context)
     lap_time_lineplot = plot_driver_lap_times(
         year=int(form_data["year"]),
         event=form_data["event"],
         drivers=form_data["drivers"],
-        y="sLapTime",
+        y=form_data["y-data"],
         upper_bound=10,
         absolute_compound=False,
     )
     imgdata = StringIO()
     lap_time_lineplot.savefig(imgdata, format="svg")
     imgdata.seek(0)
-    svg_data = imgdata.getvalue()
-    return render(request, "analytics/lap_times.html", {"image": svg_data})
+    context["image"]= imgdata.getvalue()
+    return render(request, "analytics/lap_times.html", context)
 
 def events(request):
     year = request.GET.get("year")
