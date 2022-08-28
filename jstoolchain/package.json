@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-	"tailwind-watch": "tailwind -i ../input.css -o ../static/output/css/output.css --watch",
-	"tailwind-build": "tailwind -i ../input.css -o ../static/output/css/output.css --minify"
+    "tailwind-watch": "tailwind -i ../input.css -o ../static/output/css/output.css --watch",
+    "tailwind-build": "tailwind -i ../input.css -o ../static/output/css/output.css --minify"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "tailwindcss": "^3.1.8"
+  },
+  "dependencies": {
+    "daisyui": "^2.24.0"
   }
 }
