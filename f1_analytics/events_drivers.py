@@ -10,16 +10,12 @@ df_laps_2022 = pd.read_csv("visualizations/transformed_laps_2022.csv", header=0,
 
 laps_dfs = {2021:df_laps_2021, 2022:df_laps_2022}
 
-# Getting events list given year is tricky because the 2022 csv is incomplete
-# Depend on fastf1's schedule api instead
+# Returns all the events that's happened in the year so far
 # Requires: year is 2021 or 2022
-# Returns: list of str
+# Returns: list of str, one for each Grand Prix that has taken place in the year
 def get_event_lists(year):
-    
-    # returns a fastf1 event schedule object
-    df_schedule = f.get_event_schedule(year, include_testing=False)
-
-    return pd.unique(df_schedule["EventName"]).tolist()
+    df_laps = laps_dfs[year]
+    return pd.unique(df_laps["EventName"]).tolist()
 
 # Two versions of the event to drivers function are provided
 
