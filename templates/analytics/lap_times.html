@@ -10,45 +10,63 @@
             <h1>F1 Lap Times Graph</h1>
         </div>
 
-        <form id="lapForm" action="/analytics/lap_times">
-            <div class="">
-                <select name="year" id="yearsField" class="">
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                </select>
-            </div>
-            
-            <br>
+        <br>
 
-            <select name="event" id="eventsField">
-            </select>
+        <div class="">
+            <form id="lapForm" action="/analytics/lap_times">
+                <label class="input-group">
+                    <span>Year</span>
+                    <select name="year" id="yearsField" class="select select-bordered w-full max-w-xs">
+                        <option value="2021">2021</option>
+                        <option value="2022">2022</option>
+                    </select>
+                </label>
+                
+                <br>
 
-            <br>
+                <label class="input-group">
+                    <span>Event</span>
+                    <select name="event" id="eventsField" class="select select-bordered w-full max-w-xs">
+                    </select>
+                </label>
 
-            <!-- <select name="drivers" id="driversField">
-            </select> -->
-            <div id="driversField">
-            </div>
+                <br>
 
-            <br>
+                <!-- <select name="drivers" id="driversField">
+                </select> -->
+                <div id="driversField" class="flex flex-wrap gap-4 w-1/2">
+                </div>
 
-            <label for="absolute_compound">Absolute Compound?</label>
-            <input type="checkbox" name="absolute_compound">
+                <br>
 
-            <br>
+                <!-- <label for="absolute_compound" class="label-text">Absolute Compound?</label>
+                <input type="checkbox" name="absolute_compound" class="checkbox"> -->
+                <label class="input-group cursor-pointer">
+                    <span>Absolute Compound?</span> 
+                    <input type="checkbox" class="checkbox checkbox-primary" name="absolute_compound"/>
+                </label>
 
-            <select name="y-data">
-                {% for label in y_options %}
-                    <option value="{{label}}">{{label}}</option>
-                {% endfor %}
-            </select>
+                <br>
 
-            <br>
+                <label class="input-group">
+                    <span>Data Type</span>
+                    <select name="y-data" class="select select-bordered w-full max-w-xs">
+                        {% for label in y_options %}
+                            <option value="{{label}}">{{label}}</option>
+                        {% endfor %}
+                    </select>
+                </label>
 
-            <input type="submit" value="Submit" class="btn btn-primary" id="submit" disabled>
-        </form>
+                <br>
 
-        {{image|safe}}
+                <input type="submit" value="Submit" class="btn btn-primary" id="submit">
+            </form>
+
+        </div>
+
+        <div class="">
+            {{image|safe}}
+        </div>
     </div>
 
 </body>
@@ -74,7 +92,14 @@
         });
         let drivers= await fetch(queryUrl + queryParams).then((res)=>res.json());
         let newOptionsHtml = drivers['drivers'].map((driver) => {
-                return `<input type="checkbox" name="drivers[]" value="${driver}">${driver}</input>`;
+                return `
+                    <div class="">
+                        <label class="input-group">
+                            <span class="font-mono">${driver}</span>
+                            <input type="checkbox" name="drivers[]" class="checkbox" value="${driver}"/>
+                        </label>
+                    </div>
+                    `;
             }).join('\n');
         driversField.innerHTML = newOptionsHtml;
     }
