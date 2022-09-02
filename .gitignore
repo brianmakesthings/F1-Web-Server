@@ -90,3 +90,9 @@ local_settings.py
 
 .env
 db.sqlite3
+
+# static files
+static/
+
+# js
+jstoolchain/node_modules/
