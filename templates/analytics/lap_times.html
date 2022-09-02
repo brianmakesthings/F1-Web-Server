@@ -1,42 +1,57 @@
-<h1>F1 Lap Times Graph</h1>
+{% load static %}
 
-<form id="lapForm" action="/analytics/lap_times">
-    <select name="year"  id="yearsField">
-        <option value="2021">2021</option>
-        <option value="2022">2022</option>
-    </select>
-    
-    <br>
+<head>
+    <link rel="stylesheet" href="{% static 'output/css/output.css' %}">
+</head>
 
-    <select name="event" id="eventsField">
-    </select>
+<body>
+    <div class="container mx-auto">
+        <div class="prose">
+            <h1>F1 Lap Times Graph</h1>
+        </div>
 
-    <br>
+        <form id="lapForm" action="/analytics/lap_times">
+            <div class="">
+                <select name="year" id="yearsField" class="">
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                </select>
+            </div>
+            
+            <br>
 
-    <!-- <select name="drivers" id="driversField">
-    </select> -->
-    <div id="driversField">
+            <select name="event" id="eventsField">
+            </select>
+
+            <br>
+
+            <!-- <select name="drivers" id="driversField">
+            </select> -->
+            <div id="driversField">
+            </div>
+
+            <br>
+
+            <label for="absolute_compound">Absolute Compound?</label>
+            <input type="checkbox" name="absolute_compound">
+
+            <br>
+
+            <select name="y-data">
+                {% for label in y_options %}
+                    <option value="{{label}}">{{label}}</option>
+                {% endfor %}
+            </select>
+
+            <br>
+
+            <input type="submit" value="Submit" class="btn btn-primary" id="submit" disabled>
+        </form>
+
+        {{image|safe}}
     </div>
 
-    <br>
-
-    <label for="absolute_compound">Absolute Compound?</label>
-    <input type="checkbox" name="absolute_compound">
-
-    <br>
-
-    <select name="y-data">
-        {% for label in y_options %}
-            <option value="{{label}}">{{label}}</option>
-        {% endfor %}
-    </select>
-
-    <br>
-
-    <input type="submit" value="Submit">
-</form>
-
-{{image|safe}}
+</body>
 
 <script type="module">
     const queryEvents = async (year) => {
