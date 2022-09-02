@@ -73,6 +73,7 @@
 
 <script type="module">
     const queryEvents = async (year) => {
+        submit.setAttribute("disabled", true);
         const queryUrl = '/analytics/events?'
         const queryParams = new URLSearchParams({
             year: year
@@ -82,9 +83,11 @@
                 return `<option value="${event}">${event}</option>`;
             }).join('\n');
         eventsField.innerHTML = newOptionsHtml;
+        submit.removeAttribute("disabled");
     }
 
     const queryDrivers = async (year, event) => {
+        submit.setAttribute("disabled", true);
         const queryUrl = '/analytics/drivers?'
         const queryParams = new URLSearchParams({
             year: year,
@@ -102,6 +105,7 @@
                     `;
             }).join('\n');
         driversField.innerHTML = newOptionsHtml;
+        submit.removeAttribute("disabled");
     }
 
     await queryEvents(yearsField.value);
