@@ -7,13 +7,13 @@
 <body>
     <div class="container mx-auto">
         <div class="prose">
-            <h1>F1 Lap Times Graph</h1>
+            <h1>F1 Tyre Usage Graph</h1>
         </div>
 
         <br>
 
         <div class="">
-            <form id="lapForm" action="/analytics/lap_times">
+            <form id="lapForm" action="/analytics/tyre_usage">
                 <label class="input-group">
                     <span>Year</span>
                     <select name="year" id="yearsField" class="select select-bordered w-full max-w-xs">
@@ -24,11 +24,8 @@
                 
                 <br>
 
-                <label class="input-group">
-                    <span>Event</span>
-                    <select name="event" id="eventsField" class="select select-bordered w-full max-w-xs">
-                    </select>
-                </label>
+                <div id="eventsField" class="flex flex-wrap gap-4 w-1/2">
+                </div>
 
                 <br>
 
@@ -48,13 +45,9 @@
 
                 <br>
 
-                <label class="input-group">
-                    <span>Data Type</span>
-                    <select name="y-data" class="select select-bordered w-full max-w-xs">
-                        {% for label in y_options %}
-                            <option value="{{label}}">{{label}}</option>
-                        {% endfor %}
-                    </select>
+                <label class="input-group cursor-pointer">
+                    <span>Slick Only</span> 
+                    <input type="checkbox" class="checkbox" name="slick_only"/>
                 </label>
 
                 <br>
@@ -80,7 +73,14 @@
         });
         let events = await fetch(queryUrl + queryParams).then((res)=>res.json());
         let newOptionsHtml = events['events'].map((event) => {
-                return `<option value="${event}">${event}</option>`;
+                return `
+                    <div class="">
+                        <label class="input-group">
+                            <span class="font-mono">${event}</span>
+                            <input type="checkbox" name="events[]" class="checkbox" value="${event}"/>
+                        </label>
+                    </div>
+                    `;
             }).join('\n');
         eventsField.innerHTML = newOptionsHtml;
         submit.removeAttribute("disabled");
