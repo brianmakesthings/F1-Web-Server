@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
-from visualizations.visualizations import plot_driver_lap_times
+from visualizations.visualizations import plot_driver_lap_times, tyre_usage_pie
 from f1_analytics.events_drivers import get_event_lists, event_to_drivers_csv
 from io import StringIO
 
@@ -30,13 +30,41 @@ def lap_times(request):
         drivers=form_data["drivers"],
         y=form_data["y-data"],
         upper_bound=10,
-        absolute_compound=False,
+        absolute_compound=form_data["absolute_compound"],
     )
     imgdata = StringIO()
     lap_time_lineplot.savefig(imgdata, format="svg")
     imgdata.seek(0)
     context["image"]= imgdata.getvalue()
     return render(request, "analytics/lap_times.html", context)
+
+def tyre_usage(request):
+    form_data = {
+        "year": request.GET.get("year"),
+        "events": request.GET.getlist("events[]"),
+        # "drivers": request.GET.getlist("drivers[]"),
+        "slick_only": request.GET.get("slick_only", False) == "on",
+        "absolute_compound": request.GET.get("absolute_compound", False) == "on",
+    }
+    context = {
+        "image": "",
+    }
+    for key in form_data:
+        if form_data[key] is None:
+            return render(request, "analytics/tyre_usage.html", context)
+    lap_time_lineplot = tyre_usage_pie(
+        year=int(form_data["year"]),
+        events=form_data["events"],
+        drivers=None,
+        absolute_compound=form_data["absolute_compound"],
+        slick_only=form_data["slick_only"],
+    )
+    imgdata = StringIO()
+    lap_time_lineplot.savefig(imgdata, format="svg")
+    imgdata.seek(0)
+    context["image"]= imgdata.getvalue()
+    return render(request, "analytics/tyre_usage.html", context)
+
 
 def events(request):
     year = request.GET.get("year")

@@ -172,6 +172,7 @@ def tyre_usage_pie(year, title=None, events=None, drivers=None, slick_only=False
     ax.set_title(title)
     plt.setp(autotexts, size=12)
     # plt.show()
+    return fig
     
 
 # %% [markdown]
